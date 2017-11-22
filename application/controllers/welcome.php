@@ -36,7 +36,23 @@ class Welcome extends CI_Controller {
 		$this->form_validation->set_rules('description' , 'Description', 'required') ;
 		if($this->form_validation->run())
 		{
-			echo 'Success' ;
+			$data = $this->input->post();
+			unset($data['submit']) ;
+			$this->load->model('queries') ;
+			if($this->queries->addPost($data))
+			{
+				$this->session->set_flashdata('msg' , 'Post Save Successfully');
+			}
+			else
+			{	
+				$this->session->set_flashdata('msg' , 'Post don"t Save Successfully');
+
+			}
+			return redirect('welcome') ;
+
+
+
+
 		}
 		else
 		{
