@@ -30,6 +30,13 @@ class Welcome extends CI_Controller {
 		$this->load->view('create') ;
 	}
 
+	public function update($id)
+	{	
+		$this->load->model('queries');
+		$post = $this->queries->getSinglePosts($id) ;
+		$this->load->view('update', ['post'=>$post]) ;
+	}
+
 	public function save()
 	{
 		$this->form_validation->set_rules('title','Title', 'required');
@@ -58,6 +65,59 @@ class Welcome extends CI_Controller {
 		{
 			$this->load->view('create') ;
 		}
+	}
+
+	public function change($id)
+	{
+		$this->form_validation->set_rules('title','Title', 'required');
+		$this->form_validation->set_rules('description' , 'Description', 'required') ;
+		if($this->form_validation->run())
+		{
+			$data = $this->input->post();
+			unset($data['submit']) ;
+			$this->load->model('queries') ;
+			if($this->queries->updatePost($data , $id))
+			{
+				$this->session->set_flashdata('msg' , 'Post Updated Successfully');
+			}
+			else
+			{	
+				$this->session->set_flashdata('msg' , 'Post don"t updated Successfully');
+
+			}
+			return redirect('welcome') ;
+
+
+
+
+		}
+		else
+		{
+			$this->load->view('create') ;
+		}
+			
+	}
+
+	public function view($id)
+	{
+		$this->load->model('queries');
+		$post = $this->queries->getSinglePosts($id) ;
+		$this->load->view('view', ['post'=>$post]) ;
+	}
+
+	public function delete($id)
+	{
+		$this->load->model('queries');
+		if( $this->queries->deletePosts($id))
+		{
+			$this->session->set_flashdata('msg', 'Post Deleted Successfully') ;
+		}
+		else
+		{
+			$this->session->set_flashdata('msg', 'Fail to delete !') ;
+		}
+		return redirect('welcome') ;
+	
 	}
 }
 
